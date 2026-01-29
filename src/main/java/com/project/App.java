@@ -28,6 +28,7 @@ public class App {
                 dashboard.addPlugin(plugin); // them vao dashboard
             }
 
+
             dashboard.setVisible(true);
         });
 
