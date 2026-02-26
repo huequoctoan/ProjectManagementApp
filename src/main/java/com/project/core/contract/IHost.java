@@ -10,4 +10,7 @@ public interface IHost {
 
     //Ham nay yeu cau core hien thi mot thong bao
     void showMessage(String message);
+
+    //Ham de plugin bao loi ve cho core xu ly
+    void reportError(String message, Exception e) ;
 }

@@ -12,6 +12,20 @@ import java.util.List;
 public class App {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+
+            Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+                // Khi co loi chua duoc catch xay ra o bat ky dau
+                System.err.println("Phát hiện lỗi không mong muốn trên luồng: " + thread.getName());
+
+                // Thong bao loi
+                JOptionPane.showMessageDialog(null,
+                        "Đã xảy ra lỗi nghiêm trọng:\n" + throwable.getMessage(),
+                        "Fatal Error",
+                        JOptionPane.ERROR_MESSAGE);
+
+            });
+
+
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ignored) {}

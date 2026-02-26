@@ -27,7 +27,21 @@ public class CoreHost implements IHost {
 
     @Override
     public void showMessage(String message) {
-        //Core giup plugin hien thi thong bao chuan hoa
-        JOptionPane.showMessageDialog(null, "[oOre Systems]" + message);
+        JOptionPane.showMessageDialog(null, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    //Thuc hien xu ly loi
+    @Override
+    public void reportError(String message, Exception e) {
+        // 1. In loi ra console
+        e.printStackTrace();
+
+        // 2. Hien thi thong bao loi cho nguoi dug
+        String detailMessage = message + "\nChi tiết kỹ thuật: " + e.getMessage();
+
+        JOptionPane.showMessageDialog(null,
+                detailMessage,
+                "Lỗi Hệ Thống",
+                JOptionPane.ERROR_MESSAGE);
     }
 }

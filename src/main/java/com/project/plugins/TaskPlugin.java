@@ -51,7 +51,7 @@ public class TaskPlugin implements IPlugin {
         return panel;
     }
 
-    // --- PHẦN QUAN TRỌNG: SWING WORKER (ĐA LUỒNG) ---
+
     private void loadTasksWithSwingWorker() {
         // Vô hiệu hóa nút bấm để tránh bấm nhiều lần
         btnLoad.setEnabled(false);
@@ -61,25 +61,20 @@ public class TaskPlugin implements IPlugin {
         SwingWorker<List<Task>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<Task> doInBackground() throws Exception {
-                // GIẢ LẬP ĐỘ TRỄ MẠNG/DATABASE (2 giây)
-                // Đây là nơi xử lý logic nặng, chạy ngầm, không làm đơ giao diện
+
                 Thread.sleep(2000);
 
-                // Lấy dữ liệu từ Core
                 return host.getAllTasks();
             }
 
             @Override
             protected void done() {
-                // Hàm này tự động chạy trên luồng giao diện (EDT) khi xong việc
                 try {
-                    List<Task> tasks = get(); // Lấy kết quả từ doInBackground
+                    List<Task> tasks = get();
                     updateTable(tasks);
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Lỗi tải dữ liệu!");
+                    host.reportError("Không thể tải danh sách công việc!", e);
                 } finally {
-                    // Mở lại nút bấm
                     btnLoad.setEnabled(true);
                     btnLoad.setText("Load Tasks (Async)");
                 }
