@@ -3,15 +3,14 @@ package com.project.core.model;
 import java.util.Objects;
 
 public class User {
-    // 1. Thuộc tính định danh duy nhất (Immutability)
     private final String id;
     private String username;
     private String fullName;
     private String email;
-    private String role; //
+    private UserRole role; // Thay đổi từ String sang UserRole
 
-    // 2. Constructor đầy đủ
-    public User(String id, String username, String fullName, String email, String role) {
+    // Constructor đầy đủ
+    public User(String id, String username, String fullName, String email, UserRole role) {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
@@ -19,23 +18,20 @@ public class User {
         this.setUsername(username);
         this.fullName = fullName;
         this.setEmail(email);
-        this.role = (role != null) ? role : "GUEST";
+        // Mặc định nếu null sẽ là EMPLOYEE
+        this.role = (role != null) ? role : UserRole.EMPLOYEE;
     }
 
-    // 3. Constructor rút gọn cho các thao tác nhanh
+    // Constructor rút gọn
     public User(String id, String username) {
-        this(id, username, "", "", "GUEST");
+        this(id, username, "", "", UserRole.EMPLOYEE);
     }
 
-    // --- Getters & Setters với Validation ---
+    // --- Getters & Setters ---
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getUsername() { return username; }
 
     public void setUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
@@ -44,35 +40,27 @@ public class User {
         this.username = username;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
+    public String getFullName() { return fullName; }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
 
     public void setEmail(String email) {
-        // Validation đơn giản cho email
         if (email != null && !email.contains("@")) {
             throw new IllegalArgumentException("Invalid email format");
         }
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
-    }
+    public UserRole getRole() { return role; }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
+        if (role == null) {
+            throw new IllegalArgumentException("Role cannot be null");
+        }
         this.role = role;
     }
-
-
 
     @Override
     public boolean equals(Object o) {
