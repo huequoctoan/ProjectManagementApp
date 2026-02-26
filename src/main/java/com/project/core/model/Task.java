@@ -110,4 +110,8 @@ public class Task {
         return String.format("Task[id='%s', title='%s', status=%s, deadline=%s]",
                 id, title, status, deadline);
     }
+
+    public Task(String id, String title, TaskStatus status) {
+        this(id, title, "", status, null);
+    }
 }

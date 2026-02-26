@@ -44,4 +44,13 @@ public class CoreHost implements IHost {
                 "Lỗi Hệ Thống",
                 JOptionPane.ERROR_MESSAGE);
     }
+
+
+    @Override
+    public void createTask(Task task) {
+        if (task != null) {
+            dummyTasks.add(task);
+            System.out.println("Đã thêm công việc: " + task.getTitle());
+        }
+    }
 }

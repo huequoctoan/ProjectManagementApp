@@ -13,4 +13,6 @@ public interface IHost {
 
     //Ham de plugin bao loi ve cho core xu ly
     void reportError(String message, Exception e) ;
+
+    void createTask(Task task);
 }

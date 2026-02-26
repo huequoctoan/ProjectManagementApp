@@ -1,5 +1,6 @@
 package com.project.plugins;
 
+import com.project.app.CreateTaskDialog;
 import com.project.core.contract.IHost;
 import com.project.core.contract.IPlugin;
 import com.project.core.model.Task;
@@ -30,21 +31,47 @@ public class TaskPlugin implements IPlugin {
     public JComponent getMainView() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // 1. Tạo bảng hiển thị dữ liệu (Table)
+        // 1. Cấu hình bảng hiển thị (Table)
         String[] columnNames = {"ID", "Title", "Status", "Deadline"};
         tableModel = new DefaultTableModel(columnNames, 0);
         taskTable = new JTable(tableModel);
 
-        // 2. Toolbar chứa nút bấm
+        // 2. Tạo Toolbar và các nút chức năng
         JToolBar toolBar = new JToolBar();
-        btnLoad = new JButton("Load Tasks (Async)");
 
-        // Sự kiện bấm nút: Gọi SwingWorker
+        // Nút Load dữ liệu bất đồng bộ
+        btnLoad = new JButton("Load Tasks (Async)");
         btnLoad.addActionListener(e -> loadTasksWithSwingWorker());
 
-        toolBar.add(btnLoad);
-        toolBar.add(new JButton("Create Task")); // Placeholder
+        // Nút Thêm mới Task
+        JButton btnCreate = new JButton("Create Task");
+        btnCreate.addActionListener(e -> {
+            // Lấy Frame cha (DashboardFrame) để làm owner cho Dialog
+            Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(panel);
 
+            // Mở Dialog nhập liệu
+            CreateTaskDialog dialog = new CreateTaskDialog(parentFrame);
+            dialog.setVisible(true);
+
+            // Lấy kết quả từ Dialog sau khi người dùng bấm Lưu
+            Task newTask = dialog.getNewTask();
+            if (newTask != null) {
+                // Lưu vào danh sách trong CoreHost
+                host.createTask(newTask);
+
+                // Cập nhật lại giao diện bảng ngay lập tức để người dùng thấy kết quả
+                updateTable(host.getAllTasks());
+
+                JOptionPane.showMessageDialog(panel, "Thêm công việc mới thành công!");
+            }
+        });
+
+        // Thêm các nút vào Toolbar
+        toolBar.add(btnLoad);
+        toolBar.addSeparator(); // Khoảng cách nhỏ giữa các nút
+        toolBar.add(btnCreate);
+
+        // 3. Sắp xếp bố cục cho Panel chính
         panel.add(toolBar, BorderLayout.NORTH);
         panel.add(new JScrollPane(taskTable), BorderLayout.CENTER);
 
