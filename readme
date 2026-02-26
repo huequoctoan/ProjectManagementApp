@@ -1,1 +1,32 @@
 https://drive.google.com/drive/u/0/folders/1mtT5CjVyHA_lOdb2xhKkmVWNLkXHRzjj
+# Team Task Manager 🚀
+
+A medium-scale desktop application designed to facilitate effective team collaboration through task assignment, progress tracking, and reporting. 
+
+This project is built with a **Plugin-based Architecture** and **Multi-layered Design** to ensure high reusability (design for reuse) and extensibility (design for change).
+
+## 🌟 Key Features
+* **Core Framework:** A dynamic host application that loads functional plugins at runtime using Java Reflection.
+* **Project & Task Management:** Create projects, assign tasks, set deadlines, and track statuses (TODO, IN PROGRESS, DONE).
+* **Role-based Access Control (RBAC):** Distinct permissions for Admin, Manager, and Members.
+* **Asynchronous Processing:** Utilizes `SwingWorker` for non-blocking UI operations.
+
+## 🛠️ Technologies & Architecture
+* **Language:** Java 17
+* **GUI Framework:** Java Swing / AWT
+* **Database:** MySQL 8.0 / JDBC
+* **Architecture:** 3-Tier Architecture (UI - Business - Data Access) + Plugin Infrastructure
+* **Design Patterns:** Observer, Strategy, Factory Method, Template Method.
+
+## ⚙️ Prerequisites
+Before you begin, ensure you have met the following requirements:
+* Installed **Java Development Kit (JDK) 17** or higher.
+* Installed **MySQL Server**.
+* An IDE such as **Eclipse**, **NetBeans**, or **IntelliJ IDEA**.
+
+## 🚀 Installation & Setup
+
+**Step 1: Clone the repository**
+```bash
+git clone [https://github.com/your-username/team-task-manager.git](https://github.com/your-username/team-task-manager.git)
+cd team-task-manager
