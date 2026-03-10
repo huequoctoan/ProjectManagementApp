@@ -1,0 +1,8 @@
+# Bỏ qua thư mục cấu hình của IDE
+.idea/
+
+# Bỏ qua file build của Backend
+/TaskManagement_Springboot/target/
+
+# Bỏ qua thư viện thư viện siêu nặng của Frontend
+/frontend/node_modules/
