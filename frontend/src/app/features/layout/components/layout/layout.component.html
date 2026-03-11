@@ -1,0 +1,40 @@
+<div class="app-layout">
+  
+  <aside class="sidebar">
+    <div class="logo-area">
+      <span class="logo-icon">P</span> ProSync PM
+    </div>
+    
+    <nav class="nav-menu">
+      <a routerLink="/home" routerLinkActive="active" class="nav-item">🏠 Trang chủ</a>
+      <a routerLink="/projects" routerLinkActive="active" class="nav-item">📁 Dự án</a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    
+    <header class="topbar">
+
+      <div class="user-area">
+        <div class="notification">
+          🔔 <span class="badge">1</span>
+        </div>
+        
+        <div class="avatar-container" (click)="toggleDropdown()">
+          <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" class="avatar-img">
+          
+          <div class="dropdown-menu" *ngIf="showDropdown">
+            <a href="#">👤 Trang cá nhân</a>
+            <a href="#">⚙️ Cài đặt</a>
+            <div class="divider"></div>
+            <a href="javascript:void(0)" (click)="onLogout()" class="text-danger">🚪 Đăng xuất</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet> </main>
+
+  </div>
+</div>
