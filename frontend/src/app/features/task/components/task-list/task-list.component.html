@@ -4,8 +4,66 @@
       <h2>📋 Danh sách công việc</h2>
       <p style="color: #666; font-size: 14px; margin-top: 4px;">Quản lý tất cả nhiệm vụ trong các dự án</p>
     </div>
-    <button class="btn-create">+ Thêm công việc</button>
+    <button class="btn-create" (click)="openModal()">+ Thêm công việc</button>
   </header>
+
+  <!-- MODAL THÊM CÔNG VIỆC MỚI -->
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✨ Giao việc mới</h3>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #taskForm="ngForm">
+        <div class="form-group">
+          <label>Tiêu đề công việc</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newTask.title" 
+            name="title" 
+            required 
+            placeholder="Nhập tiêu đề nhiệm vụ..."
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả</label>
+          <textarea 
+            [(ngModel)]="newTask.description" 
+            name="description" 
+            placeholder="Chi tiết công việc cần thực hiện..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Thuộc dự án</label>
+          <select [(ngModel)]="newTask.project" name="project" required>
+            <option [ngValue]="null" disabled>-- Chọn dự án --</option>
+            @for (p of projects; track p.id) {
+              <option [ngValue]="p">{{ p.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Trạng thái</label>
+          <select [(ngModel)]="newTask.status" name="status">
+            <option value="TODO">CẦN LÀM</option>
+            <option value="IN_PROGRESS">ĐANG THỰC HIỆN</option>
+            <option value="DONE">HOÀN THÀNH</option>
+            <option value="CANCELLED">ĐÃ HỦY</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Hủy</button>
+          <button type="submit" class="btn-submit" [disabled]="!taskForm.valid">Tạo công việc</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <div *ngIf="loading" class="empty-state">
     🔄 Đang tải dữ liệu...
@@ -18,14 +76,21 @@
   <div *ngIf="!loading && tasks.length > 0" class="task-grid">
     @for (task of tasks; track task.id) {
       <div class="task-card">
-        <div class="task-title">{{ task.title }}</div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div class="task-title">{{ task.title }}</div>
+          <button class="btn-delete-small" (click)="onDelete(task.id)" title="Xóa công việc">🗑️</button>
+        </div>
         <div class="task-desc">{{ task.description || 'Không có mô tả' }}</div>
         
+        <div class="task-project" *ngIf="task.project">
+          📁 <span>{{ task.project.name }}</span>
+        </div>
+
         <div class="task-footer">
           <span class="status-badge" [ngClass]="getStatusClass(task.status)">
             {{ task.status }}
           </span>
-          <div style="font-size: 12px; color: #999;">
+          <div style="font-size: 11px; color: #999;">
             ID: #{{ task.id }}
           </div>
         </div>

@@ -58,8 +58,22 @@
     .task-desc {
       color: #7f8c8d;
       font-size: 14px;
+      margin-bottom: 12px;
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .task-project {
+      font-size: 12px;
+      color: #00796b;
       margin-bottom: 16px;
-      line-height: 1.5;
+      padding: 4px 8px;
+      background: #e0f2f1;
+      border-radius: 4px;
+      display: inline-block;
+      font-weight: 500;
     }
 
     .task-footer {
@@ -68,17 +82,84 @@
       align-items: center;
 
       .status-badge {
-        font-size: 12px;
-        font-weight: bold;
+        font-size: 11px;
+        font-weight: 700;
         padding: 4px 10px;
         border-radius: 20px;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
 
-        &.status-todo { background: #e0e0e0; color: #616161; }
-        &.status-in_progress { background: #e3f2fd; color: #1976d2; }
-        &.status-done { background: #e8f5e9; color: #388e3c; }
-        &.status-cancelled { background: #ffebee; color: #d32f2f; }
+        &.status-todo { background: #f1f5f9; color: #64748b; }
+        &.status-in_progress { background: #eff6ff; color: #3b82f6; }
+        &.status-done { background: #ecfdf5; color: #10b981; }
+        &.status-cancelled { background: #fef2f2; color: #ef4444; }
       }
+    }
+  }
+
+  .btn-delete-small {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    &:hover { background: #fee2e2; }
+  }
+
+  /* --- MODAL STYLES (Dùng chung bộ style của project-list) --- */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      h3 { margin: 0; font-size: 22px; color: #2d3748; }
+      .close-btn { background: none; border: none; font-size: 20px; color: #a0aec0; cursor: pointer; &:hover { color: #e53e3e; } }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      label { display: block; font-size: 14px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
+      input, textarea, select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #edf2f7;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+        &:focus { border-color: #00796b; }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+      .btn-cancel { background: #f7fafc; border: 1px solid #e2e8f0; color: #718096; &:hover { background: #edf2f7; } }
+      .btn-submit { background: #00796b; border: none; color: white; &:hover { background: #00695c; } &:disabled { background: #cbd5e1; cursor: not-allowed; } }
     }
   }
 

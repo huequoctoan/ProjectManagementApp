@@ -16,4 +16,18 @@ export class TaskService {
     return this.http.get<Task[]>(this.apiUrl);
   }
 
+  // Thêm công việc mới
+  createTask(task: Task): Observable<Task> {
+    return this.http.post<Task>(this.apiUrl, task);
+  }
+
+  // Cập nhật công việc
+  updateTask(id: number, task: Task): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
+  }
+
+  // Xóa công việc
+  deleteTask(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }
