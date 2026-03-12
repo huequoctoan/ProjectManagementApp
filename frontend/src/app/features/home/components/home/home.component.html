@@ -2,79 +2,78 @@
   
   <header class="dashboard-header">
     <h1>Tổng quan Dashboard</h1>
-    <p>Thông tin dự án cập nhật mới nhất</p>
+    <p>Chào mừng quay trở lại! Đây là tóm tắt hoạt động dự án của bạn.</p>
   </header>
 
   <section class="task-summary-grid">
     <div class="summary-card card-todo">
-      <div class="card-title">CẦN LÀM</div>
+      <div class="card-title">Cần làm</div>
       <div class="card-number">{{ taskSummary.todo }}</div>
-      <div class="card-subtitle">Số lượng công việc</div>
+      <div class="card-subtitle">Công việc mới</div>
     </div>
     
     <div class="summary-card card-inprogress">
-      <div class="card-title">ĐANG THỰC HIỆN</div>
+      <div class="card-title">Đang thực hiện</div>
       <div class="card-number">{{ taskSummary.inProgress }}</div>
-      <div class="card-subtitle">Số lượng công việc</div>
+      <div class="card-subtitle">Tiến độ hiện tại</div>
     </div>
 
     <div class="summary-card card-done">
-      <div class="card-title">ĐÃ HOÀN THÀNH</div>
+      <div class="card-title">Đã hoàn thành</div>
       <div class="card-number">{{ taskSummary.done }}</div>
-      <div class="card-subtitle">Số lượng công việc</div>
+      <div class="card-subtitle">Thành tích tuyệt vời</div>
     </div>
 
     <div class="summary-card card-cancelled">
-      <div class="card-title">ĐÃ HỦY</div>
+      <div class="card-title">Đã hủy</div>
       <div class="card-number">{{ taskSummary.cancelled }}</div>
-      <div class="card-subtitle">Số lượng công việc</div>
+      <div class="card-subtitle">Cần xem lại</div>
     </div>
   </section>
 
   <section class="charts-grid">
 
     <div class="dashboard-box chart-main">
-      <h3>Hiệu suất dự án</h3>
-      <p class="text-muted">Xu hướng hiệu suất (Tháng này)</p>
-      <div class="mock-chart-area placeholder-text">
-        (Khu vực tích hợp thư viện vẽ Biểu đồ Đường)
+      <h3>Hiệu suất công việc</h3>
+      <p class="text-muted">Phân bổ trạng thái công việc hiện tại</p>
+      
+      <div class="visual-chart">
+        <div class="bar" [style.height.%]="(taskSummary.todo / 10) * 100" data-label="TODO"></div>
+        <div class="bar" [style.height.%]="(taskSummary.inProgress / 10) * 100" data-label="ACTIVE"></div>
+        <div class="bar" [style.height.%]="(taskSummary.done / 10) * 100" data-label="DONE"></div>
+        <div class="bar" style="height: 15%" data-label="OTHERS"></div>
       </div>
     </div>
 
-    <!-- BOX DANH SÁCH PROJECT + SEARCH -->
     <div class="dashboard-box chart-side">
-      <h3>Dự án đang hoạt động</h3>
+      <h3>Dự án đang chạy</h3>
 
-      <div style="margin-bottom: 15px;">
+      <div style="margin-bottom: 20px;">
         <input
           type="text"
           [(ngModel)]="searchTerm"
           (input)="onSearch()"
-          placeholder="🔍 Nhập tên dự án để tìm..."
-          style="width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:4px;"
+          placeholder="🔍 Tìm nhanh dự án..."
+          style="width:100%; padding:12px 16px; border:1px solid #e2e8f0; border-radius:10px; font-size: 14px; outline: none;"
         />
       </div>
 
-      <div style="max-height:200px; overflow-y:auto;">
+      <div style="max-height:240px; overflow-y:auto;">
 
         @for (p of filteredProjects; track p.id) {
 
-          <div style="padding:12px; border-bottom:1px solid #f0f0f0;">
-            <div style="font-weight:bold; color:#00796b;">
-              📁 {{ p.name }}
-            </div>
-
-            <div style="font-size:13px; color:#555; margin-top:4px;">
-              {{ p.description }}
+          <div class="project-item">
+            <div class="proj-icon">📁</div>
+            <div class="proj-info">
+              <div class="name">{{ p.name }}</div>
+              <div class="desc">{{ p.description || 'Dự án đang hoạt động' }}</div>
             </div>
           </div>
 
         } @empty {
-
-          <div class="mock-chart-area placeholder-text" style="height:100px;">
+          <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
             Không tìm thấy dự án nào.
           </div>
-
         }
 
       </div>
@@ -85,16 +84,16 @@
   <section class="bottom-grid">
 
     <div class="dashboard-box schedule-main">
-      <h3>Lịch trình dự án rút gọn</h3>
-      <p class="text-muted">Cột mốc quan trọng tuần này</p>
-      <div class="mock-chart-area placeholder-text">
-        (Khu vực vẽ Lịch trình Gantt)
+      <h3>Lịch trình ưu tiên</h3>
+      <p class="text-muted">Các mốc quan trọng sắp tới</p>
+      <div style="padding: 20px; border: 1px dashed #e2e8f0; border-radius: 12px; text-align: center; color: #94a3b8;">
+        🗓️ Tính năng lịch trình đang được tích hợp...
       </div>
     </div>
 
     <div class="dashboard-box team-side">
-      <h3>Thông tin nhóm</h3>
-      <p class="text-muted">Tổng quan đội ngũ dự án</p>
+      <h3>Đội ngũ của bạn</h3>
+      <p class="text-muted">Những gương mặt tiêu biểu</p>
 
       <div class="team-avatars">
         @for (member of teamMembers; track member.name) {
@@ -105,12 +104,15 @@
             [title]="member.name"
           >
         }
-
         <div class="avatar-more">+4</div>
       </div>
+      
+      <button style="width: 100%; margin-top: 24px; padding: 10px; background: #f1f5f9; border: none; border-radius: 8px; color: #475569; font-weight: 600; cursor: pointer;">
+        Xem tất cả thành viên
+      </button>
 
     </div>
 
   </section>
 
-</div>
+</div>

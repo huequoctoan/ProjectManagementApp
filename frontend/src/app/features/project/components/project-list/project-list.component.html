@@ -1,1 +1,88 @@
-<p>project-list works!</p>
+<div class="project-container">
+  <header class="project-header">
+    <div class="header-info">
+      <h2>📁 Quản lý Dự án</h2>
+      <p>Theo dõi và điều hành tất cả các dự án của bạn</p>
+    </div>
+    <button class="btn-add" (click)="openModal()">+ Dự án mới</button>
+  </header>
+
+  <!-- MODAL THÊM DỰ ÁN MỚI -->
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✨ Tạo dự án mới</h3>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #projectForm="ngForm">
+        <div class="form-group">
+          <label>Tên dự án</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newProject.name" 
+            name="name" 
+            required 
+            placeholder="Nhập tên dự án..."
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả</label>
+          <textarea 
+            [(ngModel)]="newProject.description" 
+            name="description" 
+            placeholder="Mô tả ngắn gọn về mục tiêu..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Hủy</button>
+          <button type="submit" class="btn-submit" [disabled]="!projectForm.valid">Tạo dự án</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="project-table-card">
+    <table *ngIf="projects.length > 0">
+      <thead>
+        <tr>
+          <th>Tên dự án</th>
+          <th>Mô tả</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of projects; track p.id) {
+          <tr>
+            <td>
+              <div class="proj-name">{{ p.name }}</div>
+            </td>
+            <td>
+              <div class="proj-desc">{{ p.description || 'Chưa có mô tả' }}</div>
+            </td>
+            <td>
+              <span style="color: #388e3c; background: #e8f5e9; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                ĐANG CHẠY
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="btn-edit" title="Chỉnh sửa">✏️</button>
+                <button class="btn-delete" (click)="onDelete(p.id)" title="Xóa">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div *ngIf="projects.length === 0" class="empty-state">
+      <span class="icon">📁</span>
+      <p>Chưa có dự án nào được tạo. Hãy bắt đầu dự án đầu tiên của bạn!</p>
+    </div>
+  </div>
+</div>
