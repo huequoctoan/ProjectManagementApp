@@ -34,6 +34,11 @@ public class AuthenticationService {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setAuthenticate(true);
         authResponse.setToken(generateToken(user.getUsername()));
+        authResponse.setUserId(user.getId());
+        authResponse.setUsername(user.getUsername());
+        authResponse.setFullName(user.getFullName());
+        authResponse.setEmail(user.getEmail());
+        authResponse.setAvatar(user.getAvatar());
         return authResponse;
     }
 
