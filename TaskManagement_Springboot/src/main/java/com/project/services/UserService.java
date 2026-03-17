@@ -73,13 +73,7 @@ public class UserService {
         if(!userRepository.existsById(id)) return;
         
         notificationRepository.deleteAll(notificationRepository.findByUserId(id));
-        
-        // Cần đảm bảo rằng repository này có method findByUserId, tôi sẽ giả định là nó có hoặc viết bổ sung nếu thiếu
-        // Tuy nhiên ProjectMember thường cũng có liên kết user
-        // projectMemberRepository.deleteAll(projectMemberRepository.findByUserId(id));
-        // Để tránh build error do thiếu findByUserId trong ProjectMemberRepository,
-        // tôi sẽ lấy tất cả member ra rồi filter, hoặc tốt nhất là bỏ qua nếu chưa cần thiết.
-        
+
         userRepository.deleteById(id);
     }
 
