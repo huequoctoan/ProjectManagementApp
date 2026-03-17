@@ -1,0 +1,421 @@
+/* =============================================
+   PROJECT BOARD (TRELLO-STYLE)
+   ============================================= */
+
+.board-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+  overflow: hidden;
+}
+
+/* ===== BOARD HEADER ===== */
+.board-header {
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  flex-shrink: 0;
+}
+
+.board-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.board-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.board-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-filter, .btn-add-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-filter {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--text-secondary);
+
+  &:hover {
+    background: var(--color-card);
+    color: var(--text-primary);
+  }
+}
+
+/* ===== KANBAN AREA ===== */
+.kanban-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 24px 32px;
+  
+  /* Tùy chỉnh thanh cuộn ngang */
+  &::-webkit-scrollbar { height: 10px; }
+  &::-webkit-scrollbar-track { background: var(--color-bg); }
+  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+  &::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+}
+
+.kanban-board {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  height: 100%;
+}
+
+/* ===== COLUMN ===== */
+.kanban-column {
+  width: 280px;
+  min-width: 280px;
+  max-height: 100%;
+  /* background is rendered inline */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.col-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0,0,0,0.05); /* Lighter border for light cols */
+}
+
+.col-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.col-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #172b4d; /* Trello dark text */
+}
+
+.col-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon-sm {
+  background: transparent;
+  border: none;
+  color: rgba(23,43,77,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover { background: rgba(0,0,0,0.08); color: #172b4d; }
+}
+
+.col-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(23,43,77,0.7);
+  background: rgba(0,0,0,0.05);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ===== TASK LIST (CDK DROP LIST) ===== */
+.task-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 50px; /* Bắt buộc để cdkDropList hoạt động khi rỗng */
+  
+  /* Tùy chỉnh thanh cuộn dọc cho từng cột */
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+}
+
+/* ===== TASK CARD ===== */
+.task-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  
+  &:hover {
+    border-color: var(--text-muted);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+/* CDK Drag Drop Styles */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  background: var(--color-card);
+  border: 1px solid var(--color-primary);
+  opacity: 0.9;
+}
+
+.custom-drag-placeholder {
+  background: rgba(255,255,255,0.05);
+  border: 1px dashed rgba(255,255,255,0.2);
+  min-height: 80px;
+  border-radius: var(--radius-sm);
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.task-list.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Card Content */
+.task-top {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.btn-delete-task {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0; /* Hide by default */
+  transition: opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+
+  &:hover {
+    color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.1);
+  }
+}
+
+/* Show delete button on card hover */
+.task-card:hover .btn-delete-task {
+  opacity: 1;
+}
+
+.priority-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority-high { background: rgba(239, 68, 68, 0.15); color: #FCA5A5; }
+.priority-medium { background: rgba(245, 158, 11, 0.15); color: #FCD34D; }
+.priority-low { background: rgba(16, 185, 129, 0.15); color: #6EE7B7; }
+
+.task-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.task-members-avatars {
+  display: flex;
+  flex-direction: row-reverse; /* Trello overlapping style */
+  justify-content: flex-end;
+  gap: -8px;
+
+  .mini-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #091e420f;
+    border: 2px solid var(--color-bg);
+    margin-left: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    overflow: hidden;
+    position: relative;
+    
+    img { width: 100%; height: 100%; object-fit: cover; }
+    span { color: #172b4d; }
+  }
+}
+
+.task-date {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #44546f;
+  background: rgba(0,0,0,0.05);
+  padding: 2px 6px;
+  border-radius: 3px;
+  
+  &.overdue {
+    background: #c9372c;
+    color: white;
+  }
+}
+
+/* ===== ADD CARD ROW ===== */
+.add-task-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: rgba(23,43,77,0.7); /* Match dark text on light column */
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(0,0,0,0.08); /* Darker hover effect */
+    color: #172b4d;
+  }
+}
+
+/* ===== INLINE ADD CARD/LIST FORMS ===== */
+.inline-add-card, .inline-add-list {
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-primary);
+}
+
+.add-card-input {
+  width: 100%;
+  min-height: 60px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+  &::placeholder { color: var(--text-muted); }
+}
+
+.add-list-input {
+  width: 100%;
+  padding: 8px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  outline: none;
+  &:focus { border-color: var(--color-primary); }
+}
+
+.add-card-actions, .add-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary-sm {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  &:hover { opacity: 0.9; }
+}
+
+.btn-icon-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  &:hover { color: var(--color-danger); }
+}
+
+/* ===== ADD ANOTHER LIST ===== */
+.add-list-wrapper {
+  width: 280px;
+  min-width: 280px;
+}
+
+.btn-add-list {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.05);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+  }
+}
