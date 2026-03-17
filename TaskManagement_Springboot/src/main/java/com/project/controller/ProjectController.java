@@ -22,9 +22,9 @@ public class ProjectController {
         return projectService.getAllProject();
     }
 
-    @PostMapping
-    public Project createProject(@RequestBody Project project){
-        return projectService.createProject(project);
+    @PostMapping("/user/{userId}")
+    public Project createProject(@RequestBody Project project, @PathVariable Long userId){
+        return projectService.createProject(project, userId);
     }
 
     @GetMapping("/{id}")
