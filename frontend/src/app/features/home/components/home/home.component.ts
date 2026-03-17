@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ProjectService } from '../../../project/services/project.service';
 import { Project } from '../../../project/models/project';
-// 1. Import thêm TaskService và Task model
 import { TaskService } from '../../../task/services/task.service';
 import { Task } from '../../../task/models/task';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -82,5 +82,11 @@ export class HomeComponent implements OnInit {
       },
       error: (err: any[]) => console.error('Lỗi tải công việc', err)
     });
+  }
+
+  getPercent(value: number): number {
+    const total = this.taskSummary.todo + this.taskSummary.inProgress + this.taskSummary.done + this.taskSummary.cancelled;
+    if (total === 0) return 0;
+    return Math.round((value / total) * 100);
   }
 }
