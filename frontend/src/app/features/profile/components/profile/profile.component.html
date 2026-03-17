@@ -1,0 +1,83 @@
+<div class="profile-page">
+  <div class="page-header">
+    <h1 class="page-title">Trang Cá Nhân</h1>
+    <p class="page-sub">Quản lý các thông tin cá nhân và bảo mật của bạn</p>
+  </div>
+
+  <div class="profile-card">
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+      </div>
+    } @else {
+      <!-- Profile Header (Avatar & Titles) -->
+      <div class="profile-header">
+        <label for="avatar-upload" class="avatar-upload-label" title="Đổi ảnh đại diện">
+          <div class="avatar-large" [style.background-image]="user.avatar ? 'url(' + user.avatar + ')' : 'none'">
+            @if (!user.avatar) {
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            }
+            <div class="avatar-overlay">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>
+              </svg>
+            </div>
+          </div>
+        </label>
+        <input type="file" id="avatar-upload" accept="image/*" (change)="onFileSelected($event)" style="display: none;">
+        
+        <div class="profile-titles">
+          <h2>{{ user.fullName || user.username }}</h2>
+          <span class="role-badge">Tài khoản cá nhân</span>
+        </div>
+      </div>
+      
+      <!-- Profile Body (Edit Form) -->
+      <form class="profile-body" (ngSubmit)="saveProfile()">
+        @if (successMessage) {
+          <div class="success-banner">
+            {{ successMessage }}
+          </div>
+        }
+
+        <div class="form-grid">
+          <div class="info-group">
+            <label>Tên đăng nhập (Chỉ đọc)</label>
+            <input type="text" [value]="user.username" disabled class="disabled-input">
+          </div>
+
+          <div class="info-group">
+            <label>Họ và Tên</label>
+            <input type="text" name="fullName" [(ngModel)]="user.fullName" placeholder="VD: Nguyễn Văn A">
+          </div>
+
+          <div class="info-group">
+            <label>Địa chỉ Email</label>
+            <input type="email" name="email" [(ngModel)]="user.email" placeholder="email@example.com">
+          </div>
+          
+          <div class="info-group">
+            <label>Ngày sinh</label>
+            <input type="date" name="dateOfBirth" [(ngModel)]="user.dateOfBirth">
+          </div>
+
+          <div class="info-group">
+            <label>Số điện thoại</label>
+            <input type="text" name="phoneNumber" [(ngModel)]="user.phoneNumber" placeholder="VD: 0987654321">
+          </div>
+
+          <div class="info-group">
+            <label>Mật khẩu (Nhập để đổi mới)</label>
+            <input type="password" name="password" [(ngModel)]="user.password" placeholder="********">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">Cập nhật thông tin</button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
