@@ -33,11 +33,14 @@ public class TaskService {
     public Task updateTask(Long id, Task details) {
         Task existingTask = taskRepository.findById(id).orElse(null);
         if (existingTask != null) {
-            existingTask.setTitle(details.getTitle());
-            existingTask.setDescription(details.getDescription());
-            existingTask.setStatus(details.getStatus());
-            existingTask.setProject(details.getProject());
-            existingTask.setAssignee(details.getAssignee());
+            if (details.getTitle() != null) existingTask.setTitle(details.getTitle());
+            if (details.getDescription() != null) existingTask.setDescription(details.getDescription());
+            if (details.getDueDate() != null) existingTask.setDueDate(details.getDueDate());
+            if (details.getProject() != null) existingTask.setProject(details.getProject());
+            if (details.getAssignedMembers() != null) {
+                existingTask.getAssignedMembers().clear();
+                existingTask.getAssignedMembers().addAll(details.getAssignedMembers());
+            }
             return taskRepository.save(existingTask);
         }
         return null;

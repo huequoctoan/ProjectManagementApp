@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tasks")
@@ -18,15 +21,23 @@ public class Task {
     private Long id;
 
     private String title;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
+
     private String status; // "TODO", "IN_PROGRESS", "DONE"
+    private LocalDateTime dueDate;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
-    @JoinColumn(name = "project_member_id")
-    private ProjectMember assignee;
+    @ManyToMany
+    @JoinTable(
+        name = "task_assignees",
+        joinColumns = @JoinColumn(name = "task_id"),
+        inverseJoinColumns = @JoinColumn(name = "project_member_id")
+    )
+    private Set<ProjectMember> assignedMembers = new HashSet<>();
 }

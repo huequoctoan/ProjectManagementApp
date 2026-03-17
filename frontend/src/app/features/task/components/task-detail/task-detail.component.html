@@ -1,0 +1,124 @@
+<div class="task-detail-modal">
+  <header class="modal-header">
+    <div class="title-section">
+      <mat-icon class="header-icon">assignment</mat-icon>
+      <input class="task-title-input" [(ngModel)]="task.title" (blur)="saveTask()" placeholder="Tiêu đề công việc">
+    </div>
+    <button class="close-btn" [mat-dialog-close]="null">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <div class="modal-content">
+    <!-- Cột chính bên trái -->
+    <div class="main-col">
+      <!-- Section Members (đã gán) -->
+      <section class="detail-section" *ngIf="task.assignedMembers && task.assignedMembers.length > 0">
+        <h3>Thành viên</h3>
+        <div class="assigned-members-list">
+          @for (member of task.assignedMembers; track member.id) {
+            <div class="member-chip" [title]="member.user.fullName || member.user.username">
+              @if (member.user.avatar) {
+                <img [src]="member.user.avatar" class="avatar-sm">
+              } @else {
+                <div class="avatar-sm-placeholder">{{ (member.user.fullName || member.user.username).charAt(0) }}</div>
+              }
+            </div>
+          }
+          <button class="add-member-circle-btn" [matMenuTriggerFor]="membersMenu">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </section>
+
+      <!-- Section Mô tả -->
+      <section class="detail-section">
+        <div class="section-title">
+          <mat-icon>subject</mat-icon>
+          <h3>Mô tả</h3>
+        </div>
+        <textarea class="description-textarea" [(ngModel)]="task.description" (blur)="saveTask()" 
+                  placeholder="Thêm mô tả chi tiết cho công việc này..."></textarea>
+      </section>
+
+      <!-- Section Hoạt động (Bình luận) -->
+      <section class="detail-section">
+        <div class="section-title">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <h3>Hoạt động</h3>
+        </div>
+        
+        <div class="comment-input-area">
+          <input type="text" [(ngModel)]="newCommentContent" placeholder="Viết bình luận..." (keyup.enter)="addComment()">
+          <button class="comment-btn" (click)="addComment()" [disabled]="!newCommentContent.trim()">Lưu</button>
+        </div>
+
+        <div class="comments-list">
+          @for (comment of comments; track comment.id) {
+            <div class="comment-item">
+              @if (comment.user.avatar) {
+                <img [src]="comment.user.avatar" class="avatar-comment">
+              } @else {
+                <div class="avatar-comment-placeholder">{{ (comment.user.fullName || comment.user.username).charAt(0) }}</div>
+              }
+              <div class="comment-content">
+                <div class="comment-header">
+                  <strong>{{ comment.user.fullName || comment.user.username }}</strong>
+                  <span class="comment-time">{{ comment.createdAt | date:'shortTime' }}</span>
+                </div>
+                <div class="comment-text">{{ comment.content }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <!-- Cột chức năng bên phải (Sidebar) -->
+    <div class="side-col">
+      <div class="sidebar-group">
+        <h4>Thêm vào thẻ</h4>
+        <button class="sidebar-btn" [matMenuTriggerFor]="membersMenu">
+          <mat-icon>person_outline</mat-icon>
+          <span>Thành viên</span>
+        </button>
+        <button class="sidebar-btn" (click)="dateInput.showPicker()">
+          <mat-icon>access_time</mat-icon>
+          <span>Ngày hết hạn</span>
+          <input type="datetime-local" #dateInput style="visibility: hidden; width: 0; height: 0; position: absolute;" 
+                 [(ngModel)]="task.dueDate" (change)="saveTask()">
+        </button>
+      </div>
+
+      <div class="sidebar-group">
+        <h4>Thao tác</h4>
+        <button class="sidebar-btn danger" (click)="deleteTask()">
+          <mat-icon>delete_outline</mat-icon>
+          <span>Xóa thẻ</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Menus -->
+<mat-menu #membersMenu="matMenu">
+  <div class="menu-container" (click)="$event.stopPropagation()">
+    <header class="menu-header">Thành viên</header>
+    <div class="members-search-list">
+      @for (member of projectMembers; track member.id) {
+        <div class="menu-member-item" (click)="toggleMember(member)">
+          <div class="member-info">
+             @if (member.user.avatar) {
+              <img [src]="member.user.avatar" class="avatar-sm">
+            } @else {
+              <div class="avatar-sm-placeholder">{{ (member.user.fullName || member.user.username).charAt(0) }}</div>
+            }
+            <span>{{ member.user.fullName || member.user.username }}</span>
+          </div>
+          <mat-icon *ngIf="isMemberAssigned(member.id)" class="check-icon">check</mat-icon>
+        </div>
+      }
+    </div>
+  </div>
+</mat-menu>
