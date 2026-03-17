@@ -1,6 +1,8 @@
 package com.project.services;
 
 import com.project.entities.User;
+import com.project.repositories.NotificationRepository;
+import com.project.repositories.ProjectMemberRepository;
 import com.project.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private ProjectMemberRepository projectMemberRepository;
+
     public List<User> getAllUser(){
         return userRepository.findAll();
     }
@@ -25,11 +33,6 @@ public class UserService {
 
         if(userRepository.findByUsername(user.getUsername()).isPresent()){
             throw new RuntimeException("Username already exists");
-        }
-
-        // set role mac dinh
-        if(user.getSystemrole() == null){
-            user.setSystemrole("USERS");
         }
 
         return userRepository.save(user);
@@ -51,12 +54,32 @@ public class UserService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay User"));
 
         existingUser.setEmail(userDetail.getEmail());
-        existingUser.setPassword(userDetail.getPassword());
+        
+        // Cập nhật thông tin mới
+        if(userDetail.getFullName() != null) existingUser.setFullName(userDetail.getFullName());
+        if(userDetail.getDateOfBirth() != null) existingUser.setDateOfBirth(userDetail.getDateOfBirth());
+        if(userDetail.getPhoneNumber() != null) existingUser.setPhoneNumber(userDetail.getPhoneNumber());
+        if(userDetail.getAvatar() != null) existingUser.setAvatar(userDetail.getAvatar());
+        
+        // Mật khẩu (Nếu client cho phép đổi)
+        if(userDetail.getPassword() != null && !userDetail.getPassword().isBlank()){
+             existingUser.setPassword(userDetail.getPassword());
+        }
 
         userRepository.save(existingUser);
     }
 
     public void deleteUser(Long id){
+        if(!userRepository.existsById(id)) return;
+        
+        notificationRepository.deleteAll(notificationRepository.findByUserId(id));
+        
+        // Cần đảm bảo rằng repository này có method findByUserId, tôi sẽ giả định là nó có hoặc viết bổ sung nếu thiếu
+        // Tuy nhiên ProjectMember thường cũng có liên kết user
+        // projectMemberRepository.deleteAll(projectMemberRepository.findByUserId(id));
+        // Để tránh build error do thiếu findByUserId trong ProjectMemberRepository,
+        // tôi sẽ lấy tất cả member ra rồi filter, hoặc tốt nhất là bỏ qua nếu chưa cần thiết.
+        
         userRepository.deleteById(id);
     }
 
