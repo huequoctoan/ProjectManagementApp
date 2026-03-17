@@ -23,7 +23,7 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
-    private Project project; // Dự án liên quan đến thông báo (để click vào redirect)
+    private Project project;
 
     @Column(columnDefinition = "TEXT")
     private String message;

@@ -19,7 +19,7 @@ public class BoardColumn {
 
     private String name;
     private String color;
-    private Integer position; // For ordering the columns
+    private Integer position;
 
     @JsonIgnore
     @ManyToOne

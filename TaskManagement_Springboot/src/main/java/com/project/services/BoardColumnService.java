@@ -28,7 +28,7 @@ public class BoardColumnService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
         
-        // Find current max position
+
         List<BoardColumn> existing = columnRepository.findByProjectIdOrderByPositionAsc(projectId);
         int nextPos = existing.size() > 0 ? existing.get(existing.size() - 1).getPosition() + 1 : 0;
         
