@@ -67,7 +67,7 @@ export class TaskDetailComponent implements OnInit {
       this.taskService.updateTask(this.task.id, this.task).subscribe({
         next: (updatedTask) => {
           this.isSaving = false;
-          this.dialogRef.close(updatedTask);
+          this.task = { ...this.task, ...updatedTask };
         },
         error: (err) => {
           console.error('Lỗi lưu task', err);
@@ -110,6 +110,25 @@ export class TaskDetailComponent implements OnInit {
         error: (err) => console.error('Lỗi xóa task', err)
       });
     }
+  }
+
+  isOverdue(): boolean {
+    if (!this.task.dueDate) return false;
+    return new Date(this.task.dueDate) < new Date();
+  }
+
+  isSoon(): boolean {
+    if (!this.task.dueDate) return false;
+    const dueDate = new Date(this.task.dueDate);
+    const now = new Date();
+    const diff = dueDate.getTime() - now.getTime();
+    return diff > 0 && diff < 86400000; // 24h
+  }
+
+  getStatusLabel(): string {
+    if (this.isOverdue()) return 'Quá hạn';
+    if (this.isSoon()) return 'Sắp hết hạn';
+    return 'Hạn chót';
   }
 }
 

@@ -4,7 +4,7 @@
       <mat-icon class="header-icon">assignment</mat-icon>
       <input class="task-title-input" [(ngModel)]="task.title" (blur)="saveTask()" placeholder="Tiêu đề công việc">
     </div>
-    <button class="close-btn" [mat-dialog-close]="null">
+    <button class="close-btn" [mat-dialog-close]="task">
       <mat-icon>close</mat-icon>
     </button>
   </header>
@@ -28,6 +28,22 @@
           <button class="add-member-circle-btn" [matMenuTriggerFor]="membersMenu">
             <mat-icon>add</mat-icon>
           </button>
+        </div>
+      </section>
+
+      <!-- Section Ngày hết hạn (Hiển thị nổi bật) -->
+      <section class="detail-section" *ngIf="task.dueDate">
+        <div class="section-title">
+          <mat-icon>access_time</mat-icon>
+          <h3>Ngày hết hạn</h3>
+        </div>
+        <div class="date-display-box" (click)="dateInput.showPicker()">
+          <span class="date-text">{{ task.dueDate | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span class="date-badge" 
+                [class.overdue]="isOverdue()" 
+                [class.soon]="isSoon()">
+            {{ getStatusLabel() }}
+          </span>
         </div>
       </section>
 

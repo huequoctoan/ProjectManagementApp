@@ -35,6 +35,7 @@ public class TaskService {
         if (existingTask != null) {
             if (details.getTitle() != null) existingTask.setTitle(details.getTitle());
             if (details.getDescription() != null) existingTask.setDescription(details.getDescription());
+            if (details.getStatus() != null) existingTask.setStatus(details.getStatus());
             if (details.getDueDate() != null) existingTask.setDueDate(details.getDueDate());
             if (details.getProject() != null) existingTask.setProject(details.getProject());
             if (details.getAssignedMembers() != null) {
