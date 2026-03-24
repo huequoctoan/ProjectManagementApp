@@ -6,6 +6,7 @@ export interface Task {
   title?: string;
   description?: string;
   status?: string;
+  priority?: 'HIGH' | 'MEDIUM' | 'LOW';
   dueDate?: string;
   project?: Project;
   assignedMembers?: ProjectMember[];

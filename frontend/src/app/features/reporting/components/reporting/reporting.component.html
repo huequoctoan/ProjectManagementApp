@@ -1,0 +1,57 @@
+<div class="reporting-container">
+  <div class="header">
+    <div class="header-top">
+        <h2>Thống kê dự án</h2>
+        <button class="btn-secondary-sm" [routerLink]="['/projects', projectId, 'board']">
+            Quay lại bảng
+        </button>
+    </div>
+    <p>Tổng quan tiến độ và phân bổ công việc</p>
+  </div>
+
+  <div class="stats-grid">
+    <!-- Progress Card -->
+    <div class="stat-card progress-card">
+      <div class="card-title">Tiến độ hoàn thành</div>
+      <div class="progress-info">
+        <span class="percentage">{{ completionRate }}%</span>
+        <span class="count">{{ statusCounts['DONE'] || 0 }} / {{ totalTasks }} nhiệm vụ</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="completionRate"></div>
+      </div>
+    </div>
+
+    <!-- Status Breakdown -->
+    <div class="stat-card">
+      <div class="card-title">Trạng thái công việc</div>
+      <div class="breakdown-list">
+        @for (status of getStatusKeys(); track status) {
+          <div class="breakdown-item">
+            <span class="label">{{ status }}</span>
+            <div class="item-bar-wrap">
+              <div class="item-bar" [style.width.%]="getPercentage(statusCounts[status])"></div>
+            </div>
+            <span class="value">{{ statusCounts[status] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Priority Breakdown -->
+    <div class="stat-card">
+      <div class="card-title">Mức độ ưu tiên</div>
+      <div class="breakdown-list">
+        @for (prio of getPriorityKeys(); track prio) {
+          <div class="breakdown-item">
+            <span class="label">{{ prio }}</span>
+            <div class="item-bar-wrap">
+                <div class="item-bar priority" [ngClass]="prio.toLowerCase()" [style.width.%]="getPercentage(priorityCounts[prio])"></div>
+            </div>
+            <span class="value">{{ priorityCounts[prio] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

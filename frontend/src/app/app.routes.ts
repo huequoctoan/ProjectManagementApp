@@ -5,6 +5,7 @@ import { LayoutComponent } from './features/layout/components/layout/layout.comp
 import { ProjectListComponent } from './features/project/components/project-list/project-list.component';
 import { ProjectBoardComponent } from './features/task/components/project-board/project-board.component';
 import { ProfileComponent } from './features/profile/components/profile/profile.component';
+import { ReportingComponent } from './features/reporting/components/reporting/reporting.component';
 import { RouterModule } from '@angular/router';
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
     children: [                 
       { path: 'projects', component: ProjectListComponent },
       { path: 'projects/:id/board', component: ProjectBoardComponent },
+      { path: 'projects/:id/reporting', component: ReportingComponent },
       { path: 'profile', component: ProfileComponent },
     ]
   }

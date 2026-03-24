@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskService } from '../../services/task.service';
@@ -30,7 +30,7 @@ interface KanbanColumn {
 @Component({
   selector: 'app-project-board',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, DragDropModule, MatDialogModule, RouterModule],
   templateUrl: './project-board.component.html',
   styleUrl: './project-board.component.scss'
 })
@@ -100,6 +100,14 @@ export class ProjectBoardComponent implements OnInit {
         this.taskService.updateTask(movedTask.id, { status: columnId }).subscribe();
       }
     }
+  }
+
+  isOverdue(dueDate?: string): boolean {
+    if (!dueDate) return false;
+    const d = new Date(dueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return d < today;
   }
 
   get connectedToIds(): string[] {
