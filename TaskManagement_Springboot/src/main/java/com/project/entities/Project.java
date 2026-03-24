@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "projects")
 @Data
@@ -18,4 +20,6 @@ public class Project {
 
     private String name;
     private String description;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

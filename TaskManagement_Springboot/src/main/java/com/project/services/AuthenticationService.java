@@ -12,22 +12,43 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.security.Key;
 import java.util.Date;
 
 @Service
 public class AuthenticationService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserService userService;
 
     private final String SECRET_KEY = "secretkey124891574501984750298fhadufe";
+
+    public AuthResponse register(User user) {
+        User savedUser = userService.createUser(user);
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setAuthenticate(true);
+        authResponse.setToken(generateToken(savedUser.getUsername()));
+        authResponse.setUserId(savedUser.getId());
+        authResponse.setUsername(savedUser.getUsername());
+        authResponse.setFullName(savedUser.getFullName());
+        authResponse.setEmail(savedUser.getEmail());
+        authResponse.setAvatar(savedUser.getAvatar());
+        authResponse.setRole(savedUser.getRole());
+        return authResponse;
+    }
 
     public AuthResponse authenticate(AuthRequest request){
 
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Sai username hoac password"));
 
-        if(!user.getPassword().equals(request.getPassword())){
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Sai username hoac password");
         }
 
@@ -39,6 +60,7 @@ public class AuthenticationService {
         authResponse.setFullName(user.getFullName());
         authResponse.setEmail(user.getEmail());
         authResponse.setAvatar(user.getAvatar());
+        authResponse.setRole(user.getRole());
         return authResponse;
     }
 

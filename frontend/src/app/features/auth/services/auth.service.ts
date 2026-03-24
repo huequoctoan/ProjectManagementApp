@@ -8,7 +8,8 @@ import { AuthRequest, AuthResponse } from '../models/auth.model';
 })
 export class AuthService {
   // Đường dẫn gọi xuống Spring Boot
-  private apiUrl = 'http://localhost:8080/api/auth/log-in';
+  // Đường dẫn gọi xuống Spring Boot
+  private apiUrl = 'http://localhost:8080/api/auth';
 
   private currentUserSubject = new BehaviorSubject<Partial<AuthResponse>>({
     userId: this.getUserId() || undefined,
@@ -24,7 +25,12 @@ export class AuthService {
 
   // 1. Gọi API Đăng nhập
   login(request: AuthRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(this.apiUrl, request);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/log-in`, request);
+  }
+
+  // 1.1 Gọi API Đăng ký
+  register(user: any): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, user);
   }
 
   // 2. Cất Token vào két sắt (localStorage)
@@ -55,6 +61,11 @@ export class AuthService {
     localStorage.setItem('auth_avatar', avatar);
     this.updateSubject();
   }
+
+  setRole(role: string): void {
+    localStorage.setItem('auth_role', role);
+    this.updateSubject();
+  }
   
   private updateSubject(): void {
     this.currentUserSubject.next({
@@ -62,7 +73,8 @@ export class AuthService {
       username: this.getUsername() || undefined,
       fullName: this.getFullName() || undefined,
       email: this.getEmail() || undefined,
-      avatar: this.getAvatar() || undefined
+      avatar: this.getAvatar() || undefined,
+      role: this.getRole() || undefined
     });
   }
 
@@ -92,6 +104,10 @@ export class AuthService {
     return localStorage.getItem('auth_avatar');
   }
 
+  getRole(): string | null {
+    return localStorage.getItem('auth_role');
+  }
+
   // 4. Kiểm tra xem đã đăng nhập chưa
   isLoggedIn(): boolean {
     return !!this.getToken(); 
@@ -104,6 +120,7 @@ export class AuthService {
     localStorage.removeItem('auth_fullName');
     localStorage.removeItem('auth_email');
     localStorage.removeItem('auth_avatar');
+    localStorage.removeItem('auth_role');
     this.currentUserSubject.next({});
   }
 }

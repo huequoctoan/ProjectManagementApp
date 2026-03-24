@@ -30,6 +30,7 @@ public class User {
     private String fullName;
     private LocalDate dateOfBirth;
     private String phoneNumber;
+    private String role; // Admin, Manager, Member
     
     @Column(columnDefinition = "LONGTEXT")
     private String avatar;

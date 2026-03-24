@@ -1,28 +1,26 @@
 package com.project.services;
 
 
+import com.project.dao.ProjectDAO;
 import com.project.entities.Project;
 import com.project.entities.ProjectMember;
 import com.project.entities.User;
 import com.project.repositories.ProjectMemberRepository;
-import com.project.repositories.ProjectRepository;
 import com.project.repositories.TaskRepository;
 import com.project.repositories.BoardColumnRepository;
 import com.project.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProjectService {
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private ProjectDAO projectDAO;
 
     @Autowired
     private ProjectMemberRepository projectMemberRepository;
@@ -34,11 +32,11 @@ public class ProjectService {
     private BoardColumnService boardColumnService;
 
     public List<Project> getAllProject(){
-        return projectRepository.findAll();
+        return projectDAO.findAll();
     }
 
     public Project createProject(Project project, Long userId){
-        Project savedProject = projectRepository.save(project);
+        Project savedProject = projectDAO.save(project);
         User user = userService.getUserById(userId);
 
         ProjectMember member = new ProjectMember();
@@ -54,7 +52,7 @@ public class ProjectService {
     }
 
     public Project findProject(Long id){
-        return projectRepository.findById(id).orElseThrow(() ->
+        return projectDAO.findById(id).orElseThrow(() ->
                                                 new ResponseStatusException(HttpStatus.NOT_FOUND,"Khong tim thay Project"));
     }
 
@@ -68,7 +66,7 @@ public class ProjectService {
     private NotificationRepository notificationRepository;
 
     public void deleteProject(Long id){
-        if(!projectRepository.existsById(id)){
+        if(projectDAO.findById(id).isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Khong tim thay Project");
         }
         
@@ -86,7 +84,7 @@ public class ProjectService {
         projectMemberRepository.deleteAll(projectMemberRepository.findByProjectId(id));
         
         // 5. Delete the Project itself
-        projectRepository.deleteById(id);
+        projectDAO.deleteById(id);
     }
 
     public List<Project> getProjectsByUserId(Long userId){

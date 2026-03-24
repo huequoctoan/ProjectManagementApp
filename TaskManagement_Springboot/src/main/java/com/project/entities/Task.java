@@ -26,7 +26,7 @@ public class Task {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
 
-    private String status; // "TODO", "IN_PROGRESS", "DONE"
+    private String status; // "TODO", "IN_PROGRESS", "DONE", "CANCEL"
     private LocalDateTime dueDate;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

@@ -1,0 +1,48 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Tham gia ngay</h2>
+    <p class="subtitle">Bắt đầu quản lý công việc của bạn</p>
+
+    <div *ngIf="errorMessage" class="error-alert">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onRegister()">
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" id="username" name="username" [(ngModel)]="user.username" placeholder="Nhập username" required />
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Họ và tên</label>
+        <input type="text" id="fullName" name="fullName" [(ngModel)]="user.fullName" placeholder="Nhập tên của bạn" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" [(ngModel)]="user.email" placeholder="example@gmail.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <input type="password" id="password" name="password" [(ngModel)]="user.password" placeholder="••••••••" required />
+      </div>
+
+      <div class="form-group">
+        <label for="role">Vai trò</label>
+        <select id="role" name="role" [(ngModel)]="user.role" class="form-select">
+          <option value="MEMBER">Thành viên (Member)</option>
+          <option value="MANAGER">Quản lý (Manager)</option>
+          <option value="ADMIN">Quản trị viên (Admin)</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-register">Đăng ký</button>
+    </form>
+
+    <div class="footer">
+      <span>Đã có tài khoản?</span>
+      <a routerLink="/login">Đăng nhập ngay</a>
+    </div>
+  </div>
+</div>

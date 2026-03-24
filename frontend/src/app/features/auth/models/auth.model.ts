@@ -11,4 +11,5 @@ export interface AuthResponse {
   fullName?: string;
   email?: string;
   avatar?: string;
+  role?: string;
 }

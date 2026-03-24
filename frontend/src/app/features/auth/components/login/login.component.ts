@@ -3,14 +3,14 @@ import { AuthService } from '../../services/auth.service';
 import { AuthRequest } from '../../models/auth.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 
 import { ProjectService } from '../../../project/services/project.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -44,6 +44,9 @@ export class LoginComponent {
             }
             if (response.avatar) {
               this.authService.setAvatar(response.avatar);
+            }
+            if (response.role) {
+              this.authService.setRole(response.role);
             }
             
             // Lấy danh sách dự án ngay sau khi đăng nhập

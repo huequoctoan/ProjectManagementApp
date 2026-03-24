@@ -1,19 +1,29 @@
 <div class="login-container">
-  <h2>Đăng nhập Hệ thống</h2>
-  
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
-  </div>
+  <div class="login-card">
+    <h2>Chào mừng trở lại</h2>
+    <p class="subtitle">Đăng nhập để điều hành dự án của bạn</p>
 
-  <div class="form-group">
-    <label>Tên đăng nhập:</label>
-    <input type="text" [(ngModel)]="request.username" placeholder="Nhập username...">
-  </div>
+    <div *ngIf="errorMessage" class="error-alert">
+      {{ errorMessage }}
+    </div>
 
-  <div class="form-group">
-    <label>Mật khẩu:</label>
-    <input type="password" [(ngModel)]="request.password" placeholder="Nhập password...">
-  </div>
+    <form (submit)="onLogin(); $event.preventDefault()">
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" id="username" name="username" [(ngModel)]="request.username" placeholder="Nhập username" required />
+      </div>
 
-  <button (click)="onLogin()">Đăng nhập</button>
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <input type="password" id="password" name="password" [(ngModel)]="request.password" placeholder="••••••••" required />
+      </div>
+
+      <button type="submit" class="btn-login">Đăng nhập</button>
+    </form>
+
+    <div class="footer">
+      <span>Chưa có tài khoản?</span>
+      <a routerLink="/register">Đăng ký ngay</a>
+    </div>
+  </div>
 </div>

@@ -18,4 +18,9 @@ public class AuthenticationController {
     public AuthResponse authenticate(@RequestBody AuthRequest request){
         return authenticationService.authenticate(request);
     }
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody com.project.entities.User user){
+        return authenticationService.register(user);
+    }
 }

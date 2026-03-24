@@ -1,7 +1,7 @@
 package com.project.services;
 
+import com.project.dao.TaskDAO;
 import com.project.entities.Task;
-import com.project.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,27 +11,27 @@ import java.util.List;
 public class TaskService {
 
     @Autowired
-    private TaskRepository taskRepository;
+    private TaskDAO taskDAO;
 
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return taskDAO.findAll();
     }
 
     public Task getTaskById(Long id) {
-        return taskRepository.findById(id).orElse(null);
+        return taskDAO.findById(id).orElse(null);
     }
 
     public List<Task> getTasksByProjectId(Long projectId){
-        return taskRepository.findByProjectId(projectId);
+        return taskDAO.findByProjectId(projectId);
     }
 
 
     public Task createTask(Task task) {
-        return taskRepository.save(task);
+        return taskDAO.save(task);
     }
 
     public Task updateTask(Long id, Task details) {
-        Task existingTask = taskRepository.findById(id).orElse(null);
+        Task existingTask = taskDAO.findById(id).orElse(null);
         if (existingTask != null) {
             if (details.getTitle() != null) existingTask.setTitle(details.getTitle());
             if (details.getDescription() != null) existingTask.setDescription(details.getDescription());
@@ -42,12 +42,12 @@ public class TaskService {
                 existingTask.getAssignedMembers().clear();
                 existingTask.getAssignedMembers().addAll(details.getAssignedMembers());
             }
-            return taskRepository.save(existingTask);
+            return taskDAO.save(existingTask);
         }
         return null;
     }
 
     public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
+        taskDAO.deleteById(id);
     }
 }
