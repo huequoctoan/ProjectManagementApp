@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TaskService } from '../../../task/services/task.service';
 import { Task } from '../../../task/models/task';
+import { ColumnService } from '../../../project/services/column.service';
 
 @Component({
   selector: 'app-reporting',
@@ -14,6 +15,7 @@ import { Task } from '../../../task/models/task';
 export class ReportingComponent implements OnInit {
   projectId!: number;
   tasks: Task[] = [];
+  columns: any[] = [];
   statusCounts: { [key: string]: number } = {};
   priorityCounts: { [key: string]: number } = {};
   totalTasks = 0;
@@ -21,7 +23,8 @@ export class ReportingComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private columnService: ColumnService
   ) {}
 
   ngOnInit(): void {
@@ -30,11 +33,16 @@ export class ReportingComponent implements OnInit {
   }
 
   loadStats(): void {
-    this.taskService.getTasksByProjectId(this.projectId).subscribe({
-      next: (tasks) => {
-        this.tasks = tasks;
-        this.totalTasks = tasks.length;
-        this.calculateStats();
+    this.columnService.getColumnsByProject(this.projectId).subscribe({
+      next: (cols) => {
+        this.columns = cols;
+        this.taskService.getTasksByProjectId(this.projectId).subscribe({
+          next: (tasks) => {
+            this.tasks = tasks;
+            this.totalTasks = tasks.length;
+            this.calculateStats();
+          }
+        });
       }
     });
   }
@@ -45,10 +53,14 @@ export class ReportingComponent implements OnInit {
     let completed = 0;
 
     this.tasks.forEach(t => {
-      // Status
-      const status = t.status || 'UNKNOWN';
-      this.statusCounts[status] = (this.statusCounts[status] || 0) + 1;
-      if (status.toUpperCase() === 'DONE' || status.toUpperCase() === 'COMPLETED') {
+      // Find column name instead of ID
+      const col = this.columns.find(c => c.id.toString() === t.status);
+      const statusLabel = col ? col.name : 'Unknown';
+      
+      this.statusCounts[statusLabel] = (this.statusCounts[statusLabel] || 0) + 1;
+      
+      const upperLabel = statusLabel.toUpperCase();
+      if (upperLabel === 'DONE' || upperLabel === 'XONG' || upperLabel === 'HOÀN THÀNH') {
         completed++;
       }
 

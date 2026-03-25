@@ -43,6 +43,9 @@ export class ProjectBoardComponent implements OnInit {
   isSaving = false;
   totalTasks = 0;
   completionRate = 0;
+  searchQuery = '';
+  showFilter = false;
+  filterType: 'title' | 'member' = 'title';
 
   constructor(
     private route: ActivatedRoute,
@@ -59,12 +62,28 @@ export class ProjectBoardComponent implements OnInit {
   loadBoard(): void {
     this.columnService.getColumnsByProject(this.projectId).subscribe({
       next: (cols: BoardColumn[]) => {
-        this.columns = cols.map((c: BoardColumn) => ({
-          id: c.id!.toString(),
-          label: c.name,
-          color: c.color || '#F1F2F4',
-          tasks: []
-        }));
+        this.columns = cols.map((c: BoardColumn) => {
+          let label = c.name;
+          // Auto-migrate old names to new standard
+          if (label === 'Today') label = 'To Do';
+          if (label === 'Week') label = 'In Progress';
+          if (label === 'Later') label = 'Done';
+          
+          return {
+            id: c.id!.toString(),
+            label: label,
+            color: c.color || '#F1F2F4',
+            tasks: []
+          };
+        });
+
+        // Sync renamed columns back to server if they were changed
+        cols.forEach(c => {
+            if (c.name === 'Today' || c.name === 'Week' || c.name === 'Later') {
+                let newName = c.name === 'Today' ? 'To Do' : (c.name === 'Week' ? 'In Progress' : 'Done');
+                this.columnService.updateColumn(c.id!, { name: newName }).subscribe();
+            }
+        });
         
         this.taskService.getTasksByProjectId(this.projectId).subscribe({
           next: (tasks: any[]) => {
@@ -83,15 +102,34 @@ export class ProjectBoardComponent implements OnInit {
                   dueDate: task.dueDate,
                   assignedMembers: task.assignedMembers || []
                 });
-                if (task.status?.toUpperCase() === 'DONE') doneCount++;
+                const colLabel = col.label.toUpperCase();
+                if (colLabel === 'DONE' || colLabel === 'HOÀN THÀNH' || colLabel === 'XONG') {
+                  doneCount++;
+                }
               }
             });
             
-            this.completionRate = this.totalTasks > 0 ? Math.round((doneCount / this.totalTasks) * 100) : 0;
+            this.calculateBoardStats();
           }
         });
       }
     });
+  }
+
+  private calculateBoardStats(): void {
+    let total = 0;
+    let done = 0;
+
+    this.columns.forEach(col => {
+      total += col.tasks.length;
+      const colLabel = col.label.toUpperCase();
+      if (colLabel === 'DONE' || colLabel === 'HOÀN THÀNH' || colLabel === 'XONG') {
+        done += col.tasks.length;
+      }
+    });
+
+    this.totalTasks = total;
+    this.completionRate = total > 0 ? Math.round((done / total) * 100) : 0;
   }
 
   getPriorityLabel(priority: string): string {
@@ -104,6 +142,7 @@ export class ProjectBoardComponent implements OnInit {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+      this.calculateBoardStats(); // Real-time update
       const movedTask = event.container.data[event.currentIndex];
       if (movedTask.id) {
         this.isSaving = true;
@@ -113,6 +152,20 @@ export class ProjectBoardComponent implements OnInit {
         });
       }
     }
+  }
+
+  getPriorityByDueDate(dueDate?: string): 'HIGH' | 'MEDIUM' | 'LOW' {
+    if (!dueDate) return 'LOW';
+    const due = new Date(dueDate);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    
+    const diffTime = due.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 0) return 'HIGH'; // Overdue or today
+    if (diffDays <= 3) return 'MEDIUM'; // 1-3 days
+    return 'LOW'; // > 3 days
   }
 
   isOverdue(dueDate?: string): boolean {
@@ -151,6 +204,7 @@ export class ProjectBoardComponent implements OnInit {
         priority: 'MEDIUM', 
         assignedMembers: [] 
       });
+      this.calculateBoardStats(); // Real-time update
       delete this.cardDrafts[columnId];
     });
   }
@@ -159,7 +213,7 @@ export class ProjectBoardComponent implements OnInit {
     const dialogRef = this.dialog.open(TaskDetailComponent, {
       width: '768px',
       maxWidth: '95vw',
-      data: { task: taskCard, projectId: this.projectId },
+      data: { task: taskCard, projectId: this.projectId, columns: this.columns },
       autoFocus: false,
       panelClass: 'trello-task-dialog'
     });
@@ -167,17 +221,47 @@ export class ProjectBoardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (result.deleted) {
-          const col = this.columns.find(c => c.id === taskCard.status);
-          if (col) col.tasks = col.tasks.filter(t => t.id !== result.id);
+          // Xóa thẻ khỏi mọi cột nếu bị xóa
+          this.columns.forEach(col => {
+            col.tasks = col.tasks.filter(t => t.id !== result.id);
+          });
         } else {
-          const col = this.columns.find(c => c.id === taskCard.status);
-          if (col) {
-            const idx = col.tasks.findIndex(t => t.id === result.id);
-            if (idx !== -1) col.tasks[idx] = { ...col.tasks[idx], ...result };
+          // BƯỚC 1: Xóa bản cũ khỏi mọi cột (để tránh bị nhân đôi)
+          this.columns.forEach(col => {
+            col.tasks = col.tasks.filter(t => t.id !== result.id);
+          });
+          
+          // BƯỚC 2: Thêm bản mới vào đúng cột hiện tại của nó
+          const targetCol = this.columns.find(c => c.id === result.status);
+          if (targetCol) {
+            targetCol.tasks.push({ ...result });
           }
         }
+        this.calculateBoardStats(); // Cập nhật lại % tiến độ và tổng số task
       }
     });
+  }
+
+  toggleFilter() {
+    this.showFilter = !this.showFilter;
+    if (!this.showFilter) this.searchQuery = '';
+  }
+
+  getFilteredTasks(tasks: TaskCard[]): TaskCard[] {
+    if (!this.searchQuery.trim()) return tasks;
+    const query = this.searchQuery.toLowerCase();
+
+    if (this.filterType === 'member') {
+      return tasks.filter(t => 
+        t.assignedMembers.some(m => 
+          (m.user.fullName?.toLowerCase().includes(query)) || 
+          (m.user.username.toLowerCase().includes(query))
+        )
+      );
+    }
+    
+    // Default: title
+    return tasks.filter(t => t.title.toLowerCase().includes(query));
   }
 
   deleteTask(taskId: number, columnId: string, event: Event) {
@@ -186,6 +270,7 @@ export class ProjectBoardComponent implements OnInit {
       this.taskService.deleteTask(taskId).subscribe(() => {
         const col = this.columns.find(c => c.id === columnId);
         if (col) col.tasks = col.tasks.filter(t => t.id !== taskId);
+        this.calculateBoardStats(); // Real-time update
       });
     }
   }

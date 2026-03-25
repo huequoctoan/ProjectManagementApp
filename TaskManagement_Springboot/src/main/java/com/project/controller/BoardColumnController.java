@@ -24,4 +24,9 @@ public class BoardColumnController {
     public BoardColumn createColumn(@PathVariable Long projectId, @RequestBody BoardColumn column) {
         return columnService.createColumn(projectId, column);
     }
+
+    @PutMapping("/{id}")
+    public BoardColumn updateColumn(@PathVariable Long id, @RequestBody BoardColumn column) {
+        return columnService.updateColumn(id, column);
+    }
 }

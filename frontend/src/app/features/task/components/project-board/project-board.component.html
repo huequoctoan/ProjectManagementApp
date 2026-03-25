@@ -12,12 +12,29 @@
       </div>
     </div>
     <div class="board-actions">
-      <button class="btn-filter">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-        </svg>
-        Bộ lọc
-      </button>
+      <div class="filter-wrapper" [class.active]="showFilter">
+        <button class="btn-filter" (click)="toggleFilter()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          Bộ lọc
+        </button>
+
+        @if (showFilter) {
+          <div class="filter-controls">
+            <select [(ngModel)]="filterType" class="filter-select">
+              <option value="title">Tên thẻ</option>
+              <option value="member">Thành viên</option>
+            </select>
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery" 
+              [placeholder]="filterType === 'title' ? 'Tìm tiêu đề...' : 'Tìm tên thành viên...'" 
+              class="filter-input"
+              autofocus>
+          </div>
+        }
+      </div>
       <button class="btn-primary-sm" [routerLink]="['/projects', projectId, 'reporting']">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
@@ -76,13 +93,16 @@
                (cdkDropListDropped)="drop($event, col.id)">
 
             <!-- Render Tasks in Column -->
-            @for (task of col.tasks; track task.id) {
+            @for (task of getFilteredTasks(col.tasks); track task.id) {
               <div class="task-card" cdkDrag (click)="openTaskDetail(task)">
                 <!-- Kéo thả rỗng khi đang kéo -->
                 <div class="custom-drag-placeholder" *cdkDragPlaceholder></div>
 
                 <div class="task-top">
-                  <span class="priority-indicator" [ngClass]="'prio-' + task.priority.toLowerCase()" [title]="'Độ ưu tiên: ' + getPriorityLabel(task.priority)"></span>
+                  <span class="priority-indicator" 
+                        [ngClass]="'prio-' + getPriorityByDueDate(task.dueDate).toLowerCase()" 
+                        [title]="'Tự động phân loại: ' + getPriorityLabel(getPriorityByDueDate(task.dueDate))">
+                  </span>
                   <button class="btn-delete-task" (click)="deleteTask(task.id!, col.id, $event)" title="Xóa thẻ này">
                     &times;
                   </button>

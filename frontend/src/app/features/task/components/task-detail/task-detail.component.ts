@@ -24,10 +24,12 @@ export class TaskDetailComponent implements OnInit {
   projectMembers: ProjectMember[] = [];
   comments: Comment[] = [];
   newCommentContent: string = '';
+  columns: any[] = [];
   isSaving = false;
+  showSavedMessage = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { task: Task; projectId: number },
+    @Inject(MAT_DIALOG_DATA) public data: { task: Task; projectId: number; columns: any[] },
     private dialogRef: MatDialogRef<TaskDetailComponent>,
     private taskService: TaskService,
     private projectService: ProjectService,
@@ -35,9 +37,14 @@ export class TaskDetailComponent implements OnInit {
     private authService: AuthService
   ) {
     this.task = { ...data.task };
+    this.columns = data.columns || [];
     if (!this.task.assignedMembers) {
       this.task.assignedMembers = [];
     }
+  }
+
+  changeStatus(columnId: string): void {
+    this.task.status = columnId;
   }
 
   ngOnInit(): void {
@@ -67,7 +74,9 @@ export class TaskDetailComponent implements OnInit {
       this.taskService.updateTask(this.task.id, this.task).subscribe({
         next: (updatedTask) => {
           this.isSaving = false;
+          this.showSavedMessage = true;
           this.task = { ...this.task, ...updatedTask };
+          setTimeout(() => this.showSavedMessage = false, 2000);
         },
         error: (err) => {
           console.error('Lỗi lưu task', err);

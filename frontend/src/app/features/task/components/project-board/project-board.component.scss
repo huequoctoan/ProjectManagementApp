@@ -334,7 +334,7 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #4a5568; /* Darker background for light text */
+    background: #4a5568; 
     border: 2px solid white;
     margin-left: -10px;
     display: flex;
@@ -342,7 +342,7 @@
     justify-content: center;
     font-size: 10px;
     font-weight: 800;
-    color: #ffffff; /* Brilliant white text */
+    color: #ffffff;
     overflow: hidden;
     position: relative;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -354,6 +354,86 @@
         z-index: 10;
         background: #2d3748;
     }
+  }
+}
+
+/* ===== FILTER SYSTEM ===== */
+.filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: #f1f2f4;
+  border: 1px solid #dfe1e6;
+  transition: all 0.25s ease;
+
+  &.active {
+    background: white;
+    border-color: #0c66e4;
+    box-shadow: 0 4px 12px rgba(9, 30, 66, 0.15);
+  }
+
+  .btn-filter {
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #44546f;
+    cursor: pointer;
+    padding: 6px 0;
+    
+    &:hover { color: #172b4d; }
+  }
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 2px solid #dfe1e6;
+  padding-left: 12px;
+  margin-left: 4px;
+  animation: slideInRight 0.2s ease-out;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.filter-select {
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background: #f4f5f7;
+  color: #1a202c;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  &:focus { border-color: #0c66e4; background: white; }
+}
+
+.filter-input {
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  background: white;
+  outline: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  width: 200px;
+  color: #1a202c;
+  transition: all 0.2s;
+  
+  &::placeholder { color: #8590a2; }
+  &:focus { 
+    border-color: #0c66e4; 
+    width: 240px; 
+    box-shadow: 0 0 0 1px #0c66e4;
   }
 }
 

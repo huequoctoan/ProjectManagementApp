@@ -24,4 +24,8 @@ export class ColumnService {
   createColumn(projectId: number, column: BoardColumn): Observable<BoardColumn> {
     return this.http.post<BoardColumn>(`${this.apiUrl}/project/${projectId}`, column);
   }
+
+  updateColumn(columnId: number, column: Partial<BoardColumn>): Observable<BoardColumn> {
+    return this.http.put<BoardColumn>(`${this.apiUrl}/${columnId}`, column);
+  }
 }

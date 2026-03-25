@@ -42,10 +42,21 @@ public class BoardColumnService {
     }
 
     public void createDefaultColumns(Project project) {
-        BoardColumn today = new BoardColumn(null, "Today", "#d9f99d", 0, project);
-        BoardColumn thisWeek = new BoardColumn(null, "Week", "#bbf7d0", 1, project);
-        BoardColumn later = new BoardColumn(null, "Later", "#f8fafc", 2, project);
+        BoardColumn todo = new BoardColumn(null, "To Do", "#E2E8F0", 0, project);
+        BoardColumn inProgress = new BoardColumn(null, "In Progress", "#BAE6FD", 1, project);
+        BoardColumn done = new BoardColumn(null, "Done", "#BBF7D0", 2, project);
         
-        columnRepository.saveAll(List.of(today, thisWeek, later));
+        columnRepository.saveAll(List.of(todo, inProgress, done));
+    }
+
+    public BoardColumn updateColumn(Long id, BoardColumn columnData) {
+        BoardColumn existing = columnRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Column not found"));
+        
+        if (columnData.getName() != null) existing.setName(columnData.getName());
+        if (columnData.getColor() != null) existing.setColor(columnData.getColor());
+        if (columnData.getPosition() != -1) existing.setPosition(columnData.getPosition());
+        
+        return columnRepository.save(existing);
     }
 }

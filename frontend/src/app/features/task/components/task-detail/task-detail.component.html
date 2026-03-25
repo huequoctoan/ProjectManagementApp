@@ -107,7 +107,27 @@
       </div>
 
       <div class="sidebar-group">
+        <h4>Trạng thái</h4>
+        <div class="status-buttons">
+          @for (col of columns; track col.id) {
+            <button class="status-btn" 
+                    [class.active]="task.status === col.id"
+                    (click)="changeStatus(col.id)">
+              {{ col.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-group actions-group">
         <h4>Thao tác</h4>
+        <button class="sidebar-btn primary-save" 
+                [class.saved]="showSavedMessage"
+                (click)="saveTask()" 
+                [disabled]="isSaving">
+          <mat-icon>{{ isSaving ? 'sync' : (showSavedMessage ? 'check_circle' : 'save') }}</mat-icon>
+          <span>{{ isSaving ? 'Đang lưu...' : (showSavedMessage ? 'Đã lưu!' : 'Lưu tất cả') }}</span>
+        </button>
         <button class="sidebar-btn danger" (click)="deleteTask()">
           <mat-icon>delete_outline</mat-icon>
           <span>Xóa thẻ</span>
