@@ -4,7 +4,12 @@
   <div class="board-header">
     <div class="board-title-area">
       <h1 class="board-title">Kanban Board</h1>
-      <p class="board-sub">Trello-style Drag & Drop</p>
+      <div class="board-meta">
+        <span class="save-status" [class.active]="isSaving">
+           <svg *ngIf="isSaving" class="spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+           {{ isSaving ? 'Đang lưu...' : 'Đã lưu tự động' }}
+        </span>
+      </div>
     </div>
     <div class="board-actions">
       <button class="btn-filter">
@@ -19,6 +24,21 @@
         </svg>
         Thống kê
       </button>
+    </div>
+  </div>
+
+  <div class="board-summary-bar">
+    <div class="summary-item">
+      <span class="summary-label">Tiến độ:</span>
+      <div class="mini-progress-track">
+        <div class="mini-progress-fill" [style.width.%]="completionRate"></div>
+      </div>
+      <span class="summary-value">{{ completionRate }}%</span>
+    </div>
+    <div class="summary-spacer"></div>
+    <div class="summary-item">
+      <span class="summary-label">Tổng nhiệm vụ:</span>
+      <span class="summary-count">{{ totalTasks }}</span>
     </div>
   </div>
 

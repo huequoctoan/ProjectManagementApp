@@ -40,6 +40,9 @@ export class ProjectBoardComponent implements OnInit {
   showAddListInput = false;
   newListName = '';
   cardDrafts: { [columnId: string]: string } = {};
+  isSaving = false;
+  totalTasks = 0;
+  completionRate = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -65,6 +68,9 @@ export class ProjectBoardComponent implements OnInit {
         
         this.taskService.getTasksByProjectId(this.projectId).subscribe({
           next: (tasks: any[]) => {
+            this.totalTasks = tasks.length;
+            let doneCount = 0;
+            
             tasks.forEach(task => {
               const col = this.columns.find(c => c.id === task.status);
               if (col) {
@@ -77,8 +83,11 @@ export class ProjectBoardComponent implements OnInit {
                   dueDate: task.dueDate,
                   assignedMembers: task.assignedMembers || []
                 });
+                if (task.status?.toUpperCase() === 'DONE') doneCount++;
               }
             });
+            
+            this.completionRate = this.totalTasks > 0 ? Math.round((doneCount / this.totalTasks) * 100) : 0;
           }
         });
       }
@@ -97,7 +106,11 @@ export class ProjectBoardComponent implements OnInit {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
       const movedTask = event.container.data[event.currentIndex];
       if (movedTask.id) {
-        this.taskService.updateTask(movedTask.id, { status: columnId }).subscribe();
+        this.isSaving = true;
+        this.taskService.updateTask(movedTask.id, { status: columnId }).subscribe({
+          next: () => { this.isSaving = false; },
+          error: () => { this.isSaving = false; }
+        });
       }
     }
   }
