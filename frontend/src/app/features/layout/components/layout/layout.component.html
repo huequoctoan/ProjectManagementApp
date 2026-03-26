@@ -60,11 +60,17 @@
     </nav>
 
     <!-- Bottom User Info -->
-    <div class="sidebar-footer">
-      <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" class="footer-avatar">
+    <div class="sidebar-footer" routerLink="/profile" style="cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+      @if (avatar) {
+        <img [src]="avatar" alt="Avatar" class="footer-avatar">
+      } @else {
+        <div class="footer-avatar-placeholder" style="width: 34px; height: 34px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 2px solid var(--color-border); flex-shrink: 0;">
+          {{ (fullName || username).charAt(0).toUpperCase() }}
+        </div>
+      }
       <div class="footer-info">
-        <span class="footer-name">Người dùng</span>
-        <span class="footer-role">Member</span>
+        <span class="footer-name">{{ fullName || username }}</span>
+        <span class="footer-role">Thành viên</span>
       </div>
     </div>
   </aside>
@@ -132,19 +138,26 @@
         </div>
 
         <!-- Avatar + Dropdown -->
-        <div class="avatar-wrapper" (click)="toggleDropdown()">
-          @if (avatar) {
-            <img [src]="avatar" alt="Avatar" class="topbar-avatar">
-          } @else {
-            <div class="topbar-avatar-placeholder" style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">
-              {{ (fullName || username).charAt(0).toUpperCase() }}
-            </div>
-          }
-          <span class="avatar-chevron">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </span>
+        <div class="avatar-wrapper" style="padding: 0; display: flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-card);">
+          <!-- Clickable Avatar to Profile -->
+          <div routerLink="/profile" class="avatar-link-zone" style="display: flex; align-items: center; padding: 4px 0 4px 8px; cursor: pointer; border-radius: var(--radius-sm) 0 0 var(--radius-sm); transition: background 0.2s;" onmouseover="this.style.background='var(--color-sidebar-hover)'" onmouseout="this.style.background='transparent'">
+            @if (avatar) {
+              <img [src]="avatar" alt="Avatar" class="topbar-avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+            } @else {
+              <div class="topbar-avatar-placeholder" style="width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">
+                {{ (fullName || username).charAt(0).toUpperCase() }}
+              </div>
+            }
+          </div>
+
+          <!-- Clickable Chevron to Dropdown -->
+          <div class="chevron-zone" (click)="toggleDropdown()" style="display: flex; align-items: center; padding: 4px 8px; cursor: pointer; transition: background 0.2s; color: var(--text-muted);" onmouseover="this.style.background='var(--color-sidebar-hover)'" onmouseout="this.style.background='transparent'">
+            <span class="avatar-chevron">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </div>
 
           <div class="dropdown-menu" *ngIf="showDropdown">
             <div class="dropdown-header">

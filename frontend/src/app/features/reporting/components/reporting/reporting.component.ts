@@ -28,8 +28,10 @@ export class ReportingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectId = Number(this.route.parent?.snapshot.paramMap.get('id'));
-    this.loadStats();
+    this.route.paramMap.subscribe(params => {
+      this.projectId = Number(params.get('id'));
+      this.loadStats();
+    });
   }
 
   loadStats(): void {

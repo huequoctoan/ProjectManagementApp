@@ -55,8 +55,10 @@ export class ProjectBoardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.projectId = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadBoard();
+    this.route.paramMap.subscribe(params => {
+      this.projectId = Number(params.get('id'));
+      this.loadBoard();
+    });
   }
 
   loadBoard(): void {
