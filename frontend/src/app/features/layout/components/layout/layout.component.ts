@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -27,6 +27,11 @@ export class LayoutComponent implements OnInit {
   fullName: string = '';
   email: string = '';
   avatar: string | null = null;
+
+  @ViewChild('userDropdown') userDropdown?: ElementRef<HTMLDivElement>;
+  @ViewChild('notifDropdown') notifDropdown?: ElementRef<HTMLDivElement>;
+  @ViewChild('userChevronZone') userChevronZone?: ElementRef<HTMLDivElement>;
+  @ViewChild('notifButton') notifButton?: ElementRef<HTMLButtonElement>;
 
   constructor(
     private authService: AuthService, 
@@ -100,10 +105,15 @@ export class LayoutComponent implements OnInit {
   }
 
   loadProjects(): void {
+    // Subscribe to shared projects state
+    this.projectService.projects$.subscribe(data => {
+      this.projects = data;
+    });
+
+    // Initial fetch
     const userId = this.authService.getUserId();
     if (userId) {
       this.projectService.getAllProjects().subscribe({
-        next: (data) => this.projects = data,
         error: (err) => console.error('Lỗi tải danh sách dự án cho sidebar', err)
       });
     }
@@ -116,8 +126,52 @@ export class LayoutComponent implements OnInit {
     }
   }
 
+  closeDropdown(): void {
+    this.showDropdown = false;
+  }
+
+  closeNotifDropdown(): void {
+    this.showNotifDropdown = false;
+  }
+
+  closeAllDropdowns(): void {
+    this.showDropdown = false;
+    this.showNotifDropdown = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent): void {
+    // Only react when at least one dropdown is open
+    if (!this.showDropdown && !this.showNotifDropdown) return;
+
+    const targetEl = event.target instanceof HTMLElement ? event.target : null;
+    if (!targetEl) return;
+
+    // Prefer DOM selectors to avoid edge cases with template refs.
+    const clickedInsideUserDropdown =
+      !!targetEl.closest('.avatar-wrapper .dropdown-menu');
+    const clickedInsideNotifDropdown = !!targetEl.closest('.notif-dropdown');
+    const clickedInsideUserTrigger = !!targetEl.closest('.chevron-zone');
+    const clickedInsideNotifTrigger =
+      !!targetEl.closest('#notifButton') || !!targetEl.closest('button[title="Thông báo"]');
+
+    // If the click is within either dropdown or its trigger, don't close.
+    if (
+      clickedInsideUserDropdown ||
+      clickedInsideNotifDropdown ||
+      clickedInsideUserTrigger ||
+      clickedInsideNotifTrigger
+    ) {
+      return;
+    }
+
+    // Otherwise, treat as "click outside" => close all.
+    this.closeAllDropdowns();
+  }
+  
   
   onLogout(): void {
+    this.closeAllDropdowns();
     this.authService.logout(); 
     this.router.navigate(['/login']); 
   }

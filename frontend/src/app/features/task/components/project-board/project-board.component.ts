@@ -147,6 +147,7 @@ export class ProjectBoardComponent implements OnInit {
       this.calculateBoardStats(); // Real-time update
       const movedTask = event.container.data[event.currentIndex];
       if (movedTask.id) {
+        movedTask.status = columnId; // Update local status immediately
         this.isSaving = true;
         this.taskService.updateTask(movedTask.id, { status: columnId }).subscribe({
           next: () => { this.isSaving = false; },

@@ -27,12 +27,16 @@ export class ProjectListComponent implements OnInit {
   constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    // Luôn lắng nghe state dùng chung (chỉ đăng ký 1 lần)
+    this.projectService.projects$.subscribe(data => {
+      this.projects = data;
+    });
+
+    this.refreshProjects();
   }
 
-  loadProjects(): void {
+  refreshProjects(): void {
     this.projectService.getAllProjects().subscribe({
-      next: (data) => this.projects = data,
       error: (err) => console.error('Lỗi tải dự án', err)
     });
   }
@@ -41,7 +45,7 @@ export class ProjectListComponent implements OnInit {
     if (id && confirm('Bạn có chắc chắn muốn xóa dự án này?')) {
       this.projectService.deleteProject(id).subscribe({
         next: () => {
-          this.loadProjects();
+        // Không cần gọi refreshProjects ở đây vì Service đã làm giúp thông qua tap()
         },
         error: (err) => alert('Lỗi: Không được phép xóa hoặc dự án đang có dữ liệu ràng buộc.')
       });
@@ -67,7 +71,7 @@ export class ProjectListComponent implements OnInit {
     this.projectService.createProject(this.newProject).subscribe({
       next: () => {
         this.closeCreateModal();
-        this.loadProjects();
+        // Không cần gọi refreshProjects ở đây vì Service đã làm giúp thông qua tap()
       },
       error: (err) => alert('Lỗi khi tạo dự án: ' + err.message)
     });
